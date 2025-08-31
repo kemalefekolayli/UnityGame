@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-public class LevelObject : MonoBehaviour
+public class LevelObject 
 {
     private int LevelNumber;
     private int GridWidth;

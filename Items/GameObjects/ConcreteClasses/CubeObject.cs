@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-public class CubeObject : GridObject  {
-        
-    [SerializeField] Sprite cubeSprite;
-    protected string CubeType;
+public class CubeObject : IGridObject 
+{
     
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
+
 }

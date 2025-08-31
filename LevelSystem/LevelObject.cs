@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class LevelObject 
 {
-    private int LevelNumber;
-    private int GridWidth;
-    private int GridHeight;
-    private int MoveCount;
-    private List<string> Grid;
+    public int LevelNumber;
+    public int GridWidth;
+    public int GridHeight;
+    public int MoveCount;
+    public List<string> Grid;
 
     
 

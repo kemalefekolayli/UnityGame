@@ -17,6 +17,7 @@ public class MoveCounter : MonoBehaviour {
             MaxMoveCount = levelController.GetLevelData().GetMoveCount();
             CurrentMoveCount = MaxMoveCount;
         }
+        movesLeftText.SetMovesLeftText(CurrentMoveCount);
     }
     
     
@@ -27,7 +28,7 @@ public class MoveCounter : MonoBehaviour {
 
     public bool DecreaseMoveCount()
     {
-        if (CurrentMoveCount < 0)
+        if (CurrentMoveCount <= 0)
         {
             Debug.Log("Current move count is less than 0");
             return false;

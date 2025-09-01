@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class LevelObject 
 {
-    public int LevelNumber;
-    public int GridWidth;
-    public int GridHeight;
-    public int MoveCount;
+    public int level_number;
+    public int grid_width;
+    public int grid_height;
+    public int move_count;  // <-- match JSON exactly
     public List<string> Grid;
 
     public int GetMoveCount()
     {
-        return MoveCount;
+        return  move_count;
     }
 
 }

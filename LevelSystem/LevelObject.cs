@@ -15,4 +15,14 @@ public class LevelObject
         return  move_count;
     }
 
+    public int GetGridWidth()
+    {
+        return  grid_width;
+    }
+
+    public int GetGridHeight()
+    {
+        return  grid_height;
+    }
+
 }

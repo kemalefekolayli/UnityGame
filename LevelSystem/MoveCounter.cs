@@ -1,14 +1,22 @@
 ﻿using UnityEngine;
 
 public class MoveCounter : MonoBehaviour {
-    [SerializeField] LevelController levelController;
+    
     public int MaxMoveCount;
     public int CurrentMoveCount;
+    public LevelController levelController;
+    public MovesLeftText movesLeftText;
 
 
     void Start()
     {
-        MaxMoveCount = levelController.GetLevelData().GetMoveCount();
+        levelController = FindFirstObjectByType<LevelController>();
+        if (levelController != null && levelController.GetLevelData() != null)
+        {
+            Debug.Log("Loading level data into movecounter");
+            MaxMoveCount = levelController.GetLevelData().GetMoveCount();
+            CurrentMoveCount = MaxMoveCount;
+        }
     }
     
     
@@ -25,6 +33,7 @@ public class MoveCounter : MonoBehaviour {
             return false;
         }
         this.CurrentMoveCount = this.CurrentMoveCount - 1;
+        movesLeftText.SetMovesLeftText(this.CurrentMoveCount);
         return true;
     }
 }

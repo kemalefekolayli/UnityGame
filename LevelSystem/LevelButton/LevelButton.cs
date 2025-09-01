@@ -10,14 +10,7 @@ public class LevelButton : MonoBehaviour
     [SerializeField] private LevelController levelController;
     [SerializeField] private BoxCollider2D buttonCollider;
     
-    void Start()
-    {
-        if (button != null)
-        {
-            button.onClick.AddListener(() => LoadSelectedLevel());
-        }
-    }
-    
+
     
     void LoadSelectedLevel()
     {

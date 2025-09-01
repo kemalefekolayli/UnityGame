@@ -15,10 +15,10 @@ public class CubeObject : AbstractGridObject
     
     public CubeColor Color => cubeColor;
     public bool IsFalling { get; set; }
-    public Vector2Int GridPosition { get; set; }
     
     void OnMouseDown()
     {
+        Debug.Log("OnMouseDown");
         // Input blocked kontrolü
         if (EventQueueManager.Instance.InputBlocked)
         {

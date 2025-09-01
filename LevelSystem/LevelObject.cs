@@ -10,6 +10,9 @@ public class LevelObject
     public int MoveCount;
     public List<string> Grid;
 
-    
+    public int GetMoveCount()
+    {
+        return MoveCount;
+    }
 
 }

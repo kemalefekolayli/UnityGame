@@ -3,9 +3,11 @@
 public class LevelController : MonoBehaviour
 {
     private int LevelNumber;
+    private LevelObject currentLevelData;
     
-    public LevelObject LoadLevel(int levelNumber)
+    public LevelObject LoadLevelData(int levelNumber)
     {
+        Debug.Log("Loading level");
         string levelName = $"levels/level_{levelNumber:D2}";
         TextAsset jsonFile = Resources.Load<TextAsset>(levelName);
 
@@ -16,5 +18,16 @@ public class LevelController : MonoBehaviour
 
         Debug.LogError($"Level {levelNumber} bulunamadı!");
         return null;
+    }
+    
+    
+    public void SetLevelData(LevelObject levelData)
+    {
+        currentLevelData = levelData;
+    }
+
+    public LevelObject GetLevelData()
+    {
+        return currentLevelData;
     }
 }

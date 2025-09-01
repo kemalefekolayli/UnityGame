@@ -8,6 +8,7 @@ public class LevelButton : MonoBehaviour
     [SerializeField] private Button button;
     [SerializeField] private int levelNumber = 1;
     [SerializeField] private LevelController levelController;
+    [SerializeField] private BoxCollider2D buttonCollider;
     
     void Start()
     {
@@ -17,12 +18,13 @@ public class LevelButton : MonoBehaviour
         }
     }
     
+    
     void LoadSelectedLevel()
     {
         Debug.Log("Loading selected level");
-        LevelObject levelData = levelController.LoadLevel(levelNumber);
+        levelController.SetLevelData(levelController.LoadLevelData(levelNumber)) ;
         
-        if (levelData != null)
+        if (levelController.GetLevelData() != null)
         {
             Debug.Log($"Level {levelNumber} yükleniyor...");
             
@@ -46,6 +48,12 @@ public class LevelButton : MonoBehaviour
     public void SetLevelNumber(int number)
     {
         levelNumber = number;
+    }
+    
+    
+    void OnMouseDown()
+    {
+        LoadSelectedLevel();
     }
 
 }

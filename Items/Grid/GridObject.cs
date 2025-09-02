@@ -34,7 +34,21 @@ public class GridObject : MonoBehaviour
         float newHeight = GridHeight * CellSize + (GridHeight - 1) * CellSpacing;
 
         gridRect.sizeDelta = new Vector2(newWidth, newHeight);
-
+        SetPosition(0,-100);
+        
         Debug.Log($"Grid resized: {newWidth} x {newHeight}");
+    }
+    
+    public void SetPosition(float x, float y) // position the grid in a place of ur own choosing
+    {
+        if (gridRect != null)
+        {
+            Vector2 newPos = new Vector2(x, y);
+            gridRect.anchoredPosition = newPos;
+        }
+        else
+        {
+            Debug.LogWarning("Target RectTransform is not assigned!");
+        }
     }
 }

@@ -1,23 +1,36 @@
 ﻿using UnityEngine;
 
-public class GridManager : MonoBehaviour { // should be singleton
-        
+public class GridManager : MonoBehaviour 
+{
     private LevelController levelController;
     private GridStorage gridStorage;
+    
+    [Header("Grid Settings")]
     public int GridHeight;
     public int GridWidth;
-    private GridStorage _gridStorage;
+    [SerializeField] private float cellSize = 1f;
+    [SerializeField] private Vector2 gridOrigin = new Vector2(-3f, -4f); // Bottom-left corner in world space
+    
+    [Header("Prefabs")]
+    [SerializeField] private GameObject cubePrefab;
+    [SerializeField] private Transform gridParent; // Parent object for all cubes
+    
+    [Header("Sprites")]
+    [SerializeField] private Sprite blueSprite;
+    // Later add: redSprite, greenSprite, yellowSprite
     
     void Start()
     {
         gridStorage = GetComponent<GridStorage>();
         levelController = FindFirstObjectByType<LevelController>();
+        
         if (levelController != null && levelController.GetLevelData() != null)
         {
-            Debug.Log("Loading level data into Grid Object");
+            Debug.Log("Loading level data into GridManager");
             GridHeight = levelController.GetLevelData().GetGridHeight();
             GridWidth = levelController.GetLevelData().GetGridWidth();
             
+            InitializeGrid(); // Actually call it!
         }
     }
     
@@ -54,14 +67,17 @@ public class GridManager : MonoBehaviour { // should be singleton
     void CreateCube(Vector2 worldPos, Vector2Int gridPos, string color)
     {
         GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
+        cube.transform.localScale = Vector3.one * (cellSize * 0.8f); // Slightly smaller than cell
+        
         CubeObject cubeObj = cube.GetComponent<CubeObject>();
         cubeObj.Initialize(gridPos);
         cubeObj.SetColor(color);
-        // Set sprite based on color...
+        cubeObj.SetSprite(blueSprite); // For now just blue
+        
+        // Set sorting order based on row (higher rows render on top)
+        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y;
         
         // Store in GridStorage
         gridStorage.SetObjectAt(gridPos, cubeObj);
     }
-
-    
 }

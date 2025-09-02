@@ -8,7 +8,7 @@ public class LevelObject
     public int grid_width;
     public int grid_height;
     public int move_count;  // <-- match JSON exactly
-    public List<string> Grid;
+    public List<string> grid;
 
     public int GetMoveCount()
     {
@@ -23,6 +23,11 @@ public class LevelObject
     public int GetGridHeight()
     {
         return  grid_height;
+    }
+    
+    public List<string> GetGridVector()
+    {
+        return  grid;
     }
 
 }

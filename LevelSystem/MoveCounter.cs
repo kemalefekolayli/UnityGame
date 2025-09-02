@@ -31,6 +31,7 @@ public class MoveCounter : MonoBehaviour {
         if (CurrentMoveCount <= 0)
         {
             Debug.Log("Current move count is less than 0");
+            // buraya oyun bitirme logici eklenecek
             return false;
         }
         this.CurrentMoveCount = this.CurrentMoveCount - 1;

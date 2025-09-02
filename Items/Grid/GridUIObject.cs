@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class GridObject : MonoBehaviour
+public class GridUIObject : MonoBehaviour
 {
     private LevelController levelController;
     public int GridHeight;

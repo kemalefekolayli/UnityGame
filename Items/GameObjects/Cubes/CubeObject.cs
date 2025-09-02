@@ -4,13 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class CubeObject : AbstractGridObject
 {
+    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private CubeColor cubeColor;
     [SerializeField] private Sprite[] colorSprites;
 
     
     public enum CubeColor
     {
-        Red, Green, Blue, Yellow
+        r, g, b, y, rand
     }
     
     public CubeColor Color => cubeColor;
@@ -38,14 +39,13 @@ public class CubeObject : AbstractGridObject
         EventQueueManager.Instance.EnqueueEvent(clickEvent);
     }
     
-    public void Initialize(CubeColor color, Vector2Int position)
+    public void Initialize(Vector2Int position)
     {
-        cubeColor = color;
         GridPosition = position;
         UpdateSprite();
     }
     
-    void UpdateSprite()
+    public void UpdateSprite()
     {
         if (colorSprites != null && colorSprites.Length > (int)cubeColor)
         {
@@ -56,5 +56,36 @@ public class CubeObject : AbstractGridObject
     public CubeColor GetCubeColor()
     {
         return cubeColor;
+    }
+    
+    
+    public void SetSprite(Sprite sprite)
+    {
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        spriteRenderer.sprite = sprite;
+    }
+
+    public void SetColor(string colorT)
+    {
+
+        if (colorT == "r")
+            cubeColor = CubeColor.r;
+        else if (colorT == "g")
+            cubeColor = CubeColor.g;
+        else if (colorT == "b")
+            cubeColor = CubeColor.b;
+        else if (colorT == "y")
+            cubeColor = CubeColor.y;
+        else if (colorT == "rand")
+        {
+            // Choose a random color
+            cubeColor = (CubeColor)Random.Range(0, 4);
+        }
+        else {
+            Debug.LogWarning($"Invalid color: {colorT}");
+            cubeColor = CubeColor.r;
+        }
     }
 }

@@ -8,7 +8,7 @@ public class GridManager : MonoBehaviour
     [Header("Grid Settings")]
     public int GridHeight;
     public int GridWidth;
-    [SerializeField] private float cellSize = 1f;
+    [SerializeField] private float cellSize = 0.5f;
     [SerializeField] private Vector2 gridOrigin = new Vector2(-3f, -4f); // Bottom-left corner in world space
     
     [Header("Prefabs")]
@@ -44,10 +44,9 @@ public class GridManager : MonoBehaviour
             Vector2 worldPos = GridToWorldPosition(gridPos);
             
             string cellType = gridData[i];
-            if(cellType == "b") // For now, only blue
-            {
-                CreateCube(worldPos, gridPos, "b");
-            }
+            
+            CreateCube(worldPos, gridPos, "b");
+            
         }
     }
     

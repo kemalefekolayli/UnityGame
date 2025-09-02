@@ -13,11 +13,7 @@ public class BlueCubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject>
         CubeObject cubeObject = newCube.GetComponent<CubeObject>();
 
         if( cubeObject != null ){
-            cubeObject.Initialize(gridPos);
-
-            cubeObject.SetColor("b");
-
-            cubeObject.SetSprite(CubeSprite);
+            cubeObject.Initialize(gridPos, "b", CubeSprite);
             cubeObject.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y;
 
             return cubeObject;

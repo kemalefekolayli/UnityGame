@@ -27,12 +27,12 @@ public class GridStorage : MonoBehaviour
         }
     }
     
-    public AbstractGridObject GetObjectAt(Vector2Int position)
+    public AbstractGridObject GetObjectAt(Vector2Int position) // also should not be here
     {
         return GridObjects.ContainsKey(position) ? GridObjects[position] : null;
     }
     
-    public void RemoveObjectAt(Vector2Int position)
+    public void RemoveObjectAt(Vector2Int position) // should not be here
     {
         if(GridObjects.ContainsKey(position))
         {

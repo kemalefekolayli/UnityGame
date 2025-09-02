@@ -67,15 +67,11 @@ public class GridManager : MonoBehaviour
     void CreateCube(Vector2 worldPos, Vector2Int gridPos, string color)
     {
         GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
-        cube.transform.localScale = Vector3.one * (cellSize * 0.8f); // Slightly smaller than cell
+        cube.transform.localScale = Vector3.one * (cellSize * 0.8f); // Slightly smaller than cell // no clue what this does btw
         
         CubeObject cubeObj = cube.GetComponent<CubeObject>();
-        cubeObj.Initialize(gridPos);
-        cubeObj.SetColor(color);
-        cubeObj.SetSprite(blueSprite); // For now just blue
-        
-        // Set sorting order based on row (higher rows render on top)
-        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y;
+        cubeObj.Initialize(gridPos, color, blueSprite); // just blue for now
+        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y; // Set sorting order based on row (higher rows render on top)
         
         // Store in GridStorage
         gridStorage.SetObjectAt(gridPos, cubeObj);

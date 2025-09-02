@@ -39,11 +39,14 @@ public class CubeObject : AbstractGridObject
         EventQueueManager.Instance.EnqueueEvent(clickEvent);
     }
     
-    public void Initialize(Vector2Int position)
+    public void Initialize(Vector2Int Position, string ColorT, Sprite Sprite )
     {
-        GridPosition = position;
+        GridPosition = Position;
+        SetColor(ColorT);
+        SetSprite(Sprite);
         UpdateSprite();
     }
+
     
     public void UpdateSprite()
     {

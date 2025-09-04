@@ -7,6 +7,7 @@ public class CubeObject : AbstractGridObject
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private CubeColor cubeColor;
     [SerializeField] private Sprite[] colorSprites;
+    
 
     
     public enum CubeColor
@@ -90,5 +91,10 @@ public class CubeObject : AbstractGridObject
             Debug.LogWarning($"Invalid color: {colorT}");
             cubeColor = CubeColor.r;
         }
+    }
+
+    public Vector2Int GetGridPos()
+    {
+        return GridPosition;
     }
 }

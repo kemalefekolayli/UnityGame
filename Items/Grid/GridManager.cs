@@ -4,8 +4,8 @@ public class GridManager : MonoBehaviour
 {
     private LevelController levelController;
     private GridStorage gridStorage;
-    
-    
+
+
     [Header("Grid Settings")]
     public int GridHeight;
     public int GridWidth;
@@ -13,12 +13,11 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2 gridOrigin = new Vector2(0f,0f); // Bottom-left corner in world space
     
     [Header("Prefabs")]
-    [SerializeField] private GameObject cubePrefab;
-    [SerializeField] private Transform gridParent; // Parent object for all cubes
+    [SerializeField] GameObject cubePrefab;
+    [SerializeField] Transform gridParent; // Parent object for all cubes
+    [SerializeField] CubeFactory cubeFactory;
     
-    [Header("Sprites")]
-    [SerializeField] private Sprite blueSprite;
-    // Later add: redSprite, greenSprite, yellowSprite
+    
     
     void Start()
     {
@@ -39,16 +38,15 @@ public class GridManager : MonoBehaviour
     {
         
         CalculateGridStartPosition(50f);
-        var gridData = gridStorage.grid;
         
-        for(int i = 0; i < gridData.Count; i++)
+        for(int i = 0; i < gridStorage.grid.Count; i++)
         {
             Vector2Int gridPos = IndexToGridPosition(i);
             Vector2 worldPos = GridToWorldPosition(gridPos);
             
-            string cellType = gridData[i];
+            string cellType = gridStorage.grid[i];
             
-            CreateCube(worldPos, gridPos, "b");
+            CreateCube(worldPos, gridPos, cellType); // bazılarını basamıyo henüz
             
         }
     }
@@ -66,16 +64,9 @@ public class GridManager : MonoBehaviour
         return gridOrigin + new Vector2(gridPos.x * cellSize, gridPos.y * cellSize);
     }
     
-    void CreateCube(Vector2 worldPos, Vector2Int gridPos, string color)
+    void CreateCube(Vector2 worldPos, Vector2Int gridPos, string color) // bu eleman factory çağırmalı
     {
-        GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
-        cube.transform.localScale = Vector3.one * (cellSize * 0.8f); // Slightly smaller than cell // no clue what this does btw
-        CubeObject cubeObj = cube.GetComponent<CubeObject>();
-        cubeObj.Initialize(gridPos, color, blueSprite); // just blue for now
-        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y; // Set sorting order based on row (higher rows render on top)
-        
-        // Store in GridStorage
-        gridStorage.SetObjectAt(gridPos, cubeObj);
+        cubeFactory.CreateCube(color,worldPos, gridParent, gridPos);
     }
     
     

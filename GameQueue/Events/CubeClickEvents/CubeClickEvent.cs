@@ -3,7 +3,7 @@
 public class CubeClickEvent : GameEvent
 {
     public Vector2Int Position { get; private set; }
-    public CubeObject.CubeColor Color { get; private set; }
+    public CubeColor Color { get; private set; }
     public CubeObject Cube { get; private set; }
     
     public CubeClickEvent(CubeObject cube, int priority = 0) : base(priority)

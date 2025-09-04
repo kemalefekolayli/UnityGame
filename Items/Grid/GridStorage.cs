@@ -40,4 +40,15 @@ public class GridStorage : MonoBehaviour
             GridTypes.Remove(position);
         }
     }
+
+// In GridStorage.cs
+    public CubeColor GetColorAt(Vector2Int position)
+    {
+        var obj = GetObjectAt(position);
+        if (obj is CubeObject cube)
+        {
+            return cube.GetCubeColor();
+        }
+        return (CubeColor)99;
+    }
 }

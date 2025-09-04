@@ -1,19 +1,21 @@
 ﻿using Project.Scripts.GameQueue.Events;
 using UnityEngine;
 
+public enum CubeColor
+{
+    r, g, b, y, rand
+}
+
 [RequireComponent(typeof(BoxCollider2D))]
 public class CubeObject : AbstractGridObject
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private CubeColor cubeColor;
     [SerializeField] private Sprite[] colorSprites;
+
+    private bool isGrouped;
     
 
-    
-    public enum CubeColor
-    {
-        r, g, b, y, rand
-    }
     
     public CubeColor Color => cubeColor;
     public bool IsFalling { get; set; }

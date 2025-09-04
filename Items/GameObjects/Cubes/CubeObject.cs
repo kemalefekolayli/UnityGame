@@ -43,12 +43,13 @@ public class CubeObject : AbstractGridObject
         EventQueueManager.Instance.EnqueueEvent(clickEvent);
     }
     
-    public void Initialize(Vector2Int Position, string ColorT, Sprite Sprite, Sprite RocketHintSprite )
+    public void Initialize(Vector2Int Position, string ColorT, Sprite RegularSprite, Sprite RocketHintSprite )
     {
         rocketHintSprite = RocketHintSprite;
+        regularSprite = RegularSprite;
         GridPosition = Position;
         SetColor(ColorT);
-        SetSprite(Sprite);
+        SetSprite(regularSprite);
     }
 
     

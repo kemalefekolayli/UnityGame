@@ -5,10 +5,14 @@ using System.Linq;
 
 public class CubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject> {
     
-    public GameObject cubePrefab;
-    public float CellSize = 0.35f;
+    [Header("Settings")]
+    [SerializeField] private GridSettings gridSettings;
     
+    [Header("Prefabs and Sprites")]
+    public GameObject cubePrefab;
+    public GameObject boxObstaclePrefab;
     [SerializeField] GridStorage gridStorage;
+    [SerializeField] Sprite BoxObstacleSprite;
     [SerializeField] Sprite BlueCubeSprite;
     [SerializeField] Sprite RedCubeSprite;
     [SerializeField] Sprite GreenCubeSprite;
@@ -23,59 +27,63 @@ public class CubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject> {
             case "g" : return CreateGreenCube(worldPos, gridParent, gridPos);
             case "y"  : return CreateYellowCube(worldPos, gridParent, gridPos);
             case "rand": return (CreateCube(GetRandomColor(), worldPos, gridParent, gridPos));
+            case "bo" : return CreateBoxCube(worldPos, gridParent, gridPos ); // for now might wanna change this logic later
             default: return null;
         }
     }
-    
+
+    private AbstractGridObject CreateBoxCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
+    {
+        GameObject box = Instantiate(boxObstaclePrefab, worldPos, Quaternion.identity, gridParent);
+        // Use centralized settings
+        box.transform.localScale = Vector3.one * gridSettings.CubeScale;
+        
+        BoxObstacle boxObstacle = box.GetComponent<BoxObstacle>();
+        boxObstacle.Initialize(gridPos, BoxObstacleSprite);
+        boxObstacle.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
+        gridStorage.SetObjectAt(gridPos, boxObstacle);
+        
+        return boxObstacle;
+    }
+    private AbstractGridObject CreateColoredCube(string color, Sprite sprite, Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
+    {
+        GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
+        
+        // Use centralized settings
+        cube.transform.localScale = Vector3.one * gridSettings.CubeScale;
+        
+        CubeObject cubeObj = cube.GetComponent<CubeObject>();
+        cubeObj.Initialize(gridPos, color, sprite);
+        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
+        gridStorage.SetObjectAt(gridPos, cubeObj);
+        
+        return cubeObj;
+    }
     
     private AbstractGridObject CreateBlueCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
     {
-        GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
-        cube.transform.localScale = Vector3.one * (CellSize); 
-        CubeObject cubeObj = cube.GetComponent<CubeObject>();
-        cubeObj.Initialize(gridPos, "b", BlueCubeSprite);
-        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
-        gridStorage.SetObjectAt(gridPos, cubeObj);
-        return cubeObj;
+        return CreateColoredCube("b", BlueCubeSprite, worldPos, gridParent, gridPos);
     }
     
     private AbstractGridObject CreateRedCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
     {
-        GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
-        cube.transform.localScale = Vector3.one * (CellSize); 
-        CubeObject cubeObj = cube.GetComponent<CubeObject>();
-        cubeObj.Initialize(gridPos, "r", RedCubeSprite);
-        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
-        gridStorage.SetObjectAt(gridPos, cubeObj);
-        return cubeObj;
-    }
-    private AbstractGridObject CreateYellowCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
-    {
-        GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
-        cube.transform.localScale = Vector3.one * (CellSize); 
-        CubeObject cubeObj = cube.GetComponent<CubeObject>();
-        cubeObj.Initialize(gridPos, "y", YellowCubeSprite); 
-        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
-        gridStorage.SetObjectAt(gridPos, cubeObj);
-        return cubeObj;
-    }
-    private AbstractGridObject CreateGreenCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
-    {
-        GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
-        cube.transform.localScale = Vector3.one * (CellSize); 
-        CubeObject cubeObj = cube.GetComponent<CubeObject>();
-        cubeObj.Initialize(gridPos, "g", GreenCubeSprite); 
-        cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
-        gridStorage.SetObjectAt(gridPos, cubeObj);
-        return cubeObj;
+        return CreateColoredCube("r", RedCubeSprite, worldPos, gridParent, gridPos);
     }
     
+    private AbstractGridObject CreateYellowCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
+    {
+        return CreateColoredCube("y", YellowCubeSprite, worldPos, gridParent, gridPos);
+    }
+    
+    private AbstractGridObject CreateGreenCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
+    {
+        return CreateColoredCube("g", GreenCubeSprite, worldPos, gridParent, gridPos);
+    }
     
     public string GetRandomColor() 
     {
-        string[] options = { "b", "r", "g" };
+        string[] options = { "b", "r", "g", "y" };
         int index = UnityEngine.Random.Range(0, options.Length);
-
         return options[index];
     }
 

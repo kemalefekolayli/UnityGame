@@ -2,21 +2,21 @@
 
 public class GridManager : MonoBehaviour 
 {
+    [Header("Settings")]
+    [SerializeField] private GridSettings gridSettings;
+    
     private LevelController levelController;
     private GridStorage gridStorage;
 
-
-    [Header("Grid Settings")]
+    [Header("Grid Info")]
     public int GridHeight;
     public int GridWidth;
-    [SerializeField] private float cellSize = 0.5f;
-    [SerializeField] private Vector2 gridOrigin = new Vector2(0f,0f); // Bottom-left corner in world space
+    private Vector2 gridOrigin; // Bottom-left corner in world space
     
     [Header("Prefabs")]
     [SerializeField] GameObject cubePrefab;
     [SerializeField] Transform gridParent; // Parent object for all cubes
     [SerializeField] CubeFactory cubeFactory;
-    
     
     
     void Start()
@@ -30,30 +30,27 @@ public class GridManager : MonoBehaviour
             Debug.Log("Loading level data into GridManager");
             GridHeight = levelController.GetLevelData().GetGridHeight();
             GridWidth = levelController.GetLevelData().GetGridWidth();
-            InitializeGrid(); // Actually call it!
+            InitializeGrid(); 
         }
     }
     
     void InitializeGrid()
     {
         
-        CalculateGridStartPosition(50f);
+        CalculateGridStartPosition();
         
         for(int i = 0; i < gridStorage.grid.Count; i++)
         {
             Vector2Int gridPos = IndexToGridPosition(i);
             Vector2 worldPos = GridToWorldPosition(gridPos);
-            
             string cellType = gridStorage.grid[i];
             
             CreateCube(worldPos, gridPos, cellType); // bazılarını basamıyo henüz
-            
         }
     }
     
     Vector2Int IndexToGridPosition(int index)
     {
-        // Grid data starts from bottom-left, goes right then up
         int x = index % GridWidth;
         int y = index / GridWidth;
         return new Vector2Int(x, y);
@@ -61,7 +58,10 @@ public class GridManager : MonoBehaviour
     
     Vector2 GridToWorldPosition(Vector2Int gridPos)
     {
-        return gridOrigin + new Vector2(gridPos.x * cellSize, gridPos.y * cellSize);
+        return gridOrigin + new Vector2(
+            gridPos.x * gridSettings.CellSpacing, 
+            gridPos.y * gridSettings.CellSpacing
+        );
     }
     
     void CreateCube(Vector2 worldPos, Vector2Int gridPos, string color) // bu eleman factory çağırmalı
@@ -69,16 +69,26 @@ public class GridManager : MonoBehaviour
         cubeFactory.CreateCube(color,worldPos, gridParent, gridPos);
     }
     
-    
-    public void CalculateGridStartPosition(float cellSize)
+    public void CalculateGridStartPosition()
     {
-        float totalGridWidth = GridWidth * cellSize;
-        float totalGridHeight = GridHeight * cellSize;
-        Vector2 screenCenter = new Vector2(0, -1);
-
+        float totalGridWidth = GridWidth * gridSettings.CellSpacing;
+        float totalGridHeight = GridHeight * gridSettings.CellSpacing;
+        
         gridOrigin = new Vector2(
-            screenCenter.x - (totalGridWidth / 200) + cellSize / 200,
-            screenCenter.y - (totalGridHeight / 200) + cellSize / 100
+            gridSettings.GridOriginOffset.x - (totalGridWidth / 200) + gridSettings.CellSpacing / 200,
+            gridSettings.GridOriginOffset.y - (totalGridHeight / 200) + gridSettings.CellSpacing / 100
         );
+    }
+    
+    
+    // helper for debugging
+    [ContextMenu("Debug Grid Info")]
+    void DebugGridInfo()
+    {
+        Debug.Log($"Grid: {GridWidth}x{GridHeight}");
+        Debug.Log($"Cube Scale: {gridSettings.CubeScale}");
+        Debug.Log($"Cell Spacing: {gridSettings.CellSpacing}");
+        Debug.Log($"Gap between cubes: {gridSettings.ActualCubeGap}");
+        Debug.Log($"Grid Origin: {gridOrigin}");
     }
 }

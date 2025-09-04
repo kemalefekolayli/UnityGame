@@ -5,8 +5,11 @@ public class GridUIObject : MonoBehaviour
     private LevelController levelController;
     public int GridHeight;
     public int GridWidth;
+
+    public float newWidth;
+    public float newHeight;
     
-    private float CellSize = 50f;
+    private float CellSize = 70f;
     private float CellSpacing = 5f;
 
     [SerializeField] private GameObject gridObject;
@@ -30,8 +33,8 @@ public class GridUIObject : MonoBehaviour
     {
         if (gridRect == null) return;
 
-        float newWidth = GridWidth * CellSize + (GridWidth - 1) * CellSpacing;
-        float newHeight = GridHeight * CellSize + (GridHeight - 1) * CellSpacing;
+        newWidth = GridWidth * CellSize + (GridWidth - 1) * CellSpacing;
+        newHeight = GridHeight * CellSize + (GridHeight - 1) * CellSpacing;
 
         gridRect.sizeDelta = new Vector2(newWidth, newHeight);
         SetPosition(0,-100);
@@ -51,4 +54,7 @@ public class GridUIObject : MonoBehaviour
             Debug.LogWarning("Target RectTransform is not assigned!");
         }
     }
+
+
+    
 }

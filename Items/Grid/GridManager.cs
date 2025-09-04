@@ -5,11 +5,12 @@ public class GridManager : MonoBehaviour
     private LevelController levelController;
     private GridStorage gridStorage;
     
+    
     [Header("Grid Settings")]
     public int GridHeight;
     public int GridWidth;
     [SerializeField] private float cellSize = 0.5f;
-    [SerializeField] private Vector2 gridOrigin = new Vector2(-3f, -4f); // Bottom-left corner in world space
+    [SerializeField] private Vector2 gridOrigin = new Vector2(0f,0f); // Bottom-left corner in world space
     
     [Header("Prefabs")]
     [SerializeField] private GameObject cubePrefab;
@@ -21,6 +22,7 @@ public class GridManager : MonoBehaviour
     
     void Start()
     {
+        
         gridStorage = GetComponent<GridStorage>();
         levelController = FindFirstObjectByType<LevelController>();
         
@@ -29,14 +31,14 @@ public class GridManager : MonoBehaviour
             Debug.Log("Loading level data into GridManager");
             GridHeight = levelController.GetLevelData().GetGridHeight();
             GridWidth = levelController.GetLevelData().GetGridWidth();
-
             InitializeGrid(); // Actually call it!
         }
     }
     
     void InitializeGrid()
     {
-        SetGridParentPos(0,-100);
+        
+        CalculateGridStartPosition(50f);
         var gridData = gridStorage.grid;
         
         for(int i = 0; i < gridData.Count; i++)
@@ -68,7 +70,6 @@ public class GridManager : MonoBehaviour
     {
         GameObject cube = Instantiate(cubePrefab, worldPos, Quaternion.identity, gridParent);
         cube.transform.localScale = Vector3.one * (cellSize * 0.8f); // Slightly smaller than cell // no clue what this does btw
-        
         CubeObject cubeObj = cube.GetComponent<CubeObject>();
         cubeObj.Initialize(gridPos, color, blueSprite); // just blue for now
         cubeObj.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y; // Set sorting order based on row (higher rows render on top)
@@ -76,17 +77,17 @@ public class GridManager : MonoBehaviour
         // Store in GridStorage
         gridStorage.SetObjectAt(gridPos, cubeObj);
     }
-
-    void SetGridParentPos(float x, float y)
+    
+    
+    public void CalculateGridStartPosition(float cellSize)
     {
-        if (gridParent != null)
-        {
-            Vector2 newPos = new Vector2(gridParent.position.x, gridParent.position.y);
-            gridParent.position = newPos;
-        }
-        else
-        {
-            Debug.LogWarning("Target gridParent is not assigned!");
-        }
+        float totalGridWidth = GridWidth * cellSize;
+        float totalGridHeight = GridHeight * cellSize;
+        Vector2 screenCenter = new Vector2(0, -1);
+
+        gridOrigin = new Vector2(
+            screenCenter.x - (totalGridWidth / 200) + cellSize / 200,
+            screenCenter.y - (totalGridHeight / 200) + cellSize / 100
+        );
     }
 }

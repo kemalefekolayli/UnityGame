@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class LevelButton : MonoBehaviour 
 {
     [SerializeField] private Button button;
-    [SerializeField] private int levelNumber = 1;
+    [SerializeField] private int levelNumber = 2;
     [SerializeField] private LevelController levelController;
     [SerializeField] private BoxCollider2D buttonCollider;
     

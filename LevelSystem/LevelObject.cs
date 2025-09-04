@@ -29,5 +29,10 @@ public class LevelObject
     {
         return  grid;
     }
+    
+    public int GetLevelNumber()
+    {
+        return  level_number;
+    }
 
 }

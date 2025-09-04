@@ -29,13 +29,14 @@ public class GridManager : MonoBehaviour
             Debug.Log("Loading level data into GridManager");
             GridHeight = levelController.GetLevelData().GetGridHeight();
             GridWidth = levelController.GetLevelData().GetGridWidth();
-            
+
             InitializeGrid(); // Actually call it!
         }
     }
     
     void InitializeGrid()
     {
+        SetGridParentPos(0,-100);
         var gridData = gridStorage.grid;
         
         for(int i = 0; i < gridData.Count; i++)
@@ -74,5 +75,18 @@ public class GridManager : MonoBehaviour
         
         // Store in GridStorage
         gridStorage.SetObjectAt(gridPos, cubeObj);
+    }
+
+    void SetGridParentPos(float x, float y)
+    {
+        if (gridParent != null)
+        {
+            Vector2 newPos = new Vector2(gridParent.position.x, gridParent.position.y);
+            gridParent.position = newPos;
+        }
+        else
+        {
+            Debug.LogWarning("Target gridParent is not assigned!");
+        }
     }
 }

@@ -11,7 +11,8 @@ public class CubeObject : AbstractGridObject
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private CubeColor cubeColor;
-    [SerializeField] private Sprite[] colorSprites;
+    [SerializeField] private Sprite rocketHintSprite;
+    [SerializeField] private Sprite regularSprite;
 
     private bool isGrouped;
     
@@ -42,28 +43,37 @@ public class CubeObject : AbstractGridObject
         EventQueueManager.Instance.EnqueueEvent(clickEvent);
     }
     
-    public void Initialize(Vector2Int Position, string ColorT, Sprite Sprite )
+    public void Initialize(Vector2Int Position, string ColorT, Sprite Sprite, Sprite RocketHintSprite )
     {
+        rocketHintSprite = RocketHintSprite;
         GridPosition = Position;
         SetColor(ColorT);
         SetSprite(Sprite);
-        UpdateSprite();
     }
 
     
-    public void UpdateSprite()
-    {
-        if (colorSprites != null && colorSprites.Length > (int)cubeColor)
-        {
-            GetComponent<SpriteRenderer>().sprite = colorSprites[(int)cubeColor];
-        }
-    }
+
 
     public CubeColor GetCubeColor()
     {
         return cubeColor;
     }
-    
+
+    public void SetRocketSprite()
+    {
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        spriteRenderer.sprite = rocketHintSprite;
+    }
+
+    public void SetRegularSprite()
+    {
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        spriteRenderer.sprite = regularSprite;
+    }
     
     public void SetSprite(Sprite sprite)
     {

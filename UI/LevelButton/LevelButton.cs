@@ -35,13 +35,14 @@ public class LevelButton : MonoBehaviour
             
             Debug.Log($"Level {levelNumber} yükleniyor...");
             
+
+            SaveLastPlayedLevel(levelNumber);
+            SceneManager.LoadScene("LevelScene");
             var goalTracker =  Object.FindFirstObjectByType<GoalTracker>();
             if (goalTracker != null)
             {
                 goalTracker.SetGoals();
-            };
-            SaveLastPlayedLevel(levelNumber);
-            SceneManager.LoadScene("LevelScene");
+            }
         }
         else
         {

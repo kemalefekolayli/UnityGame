@@ -4,18 +4,16 @@ using UnityEngine;
 public class GoalTracker : MonoBehaviour
 {
 
-    [SerializeField] GridStorage _gridStorage;
+    private GridStorage _gridStorage;
     
     public Dictionary<string, int> ObstacleCounts { get; private set; }
-
-    void Start()
-    {
-        _gridStorage = GetComponent<GridStorage>();
-    }
-
+    
     public void SetGoals()
     {
-
+        if (_gridStorage == null)
+        {
+            _gridStorage = FindFirstObjectByType<GridStorage>();
+        }
         var gridTypes = _gridStorage.ReturnGridTypes();
         ObstacleCounts = new Dictionary<string, int>();
 

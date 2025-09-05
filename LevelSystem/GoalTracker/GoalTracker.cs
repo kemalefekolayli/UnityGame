@@ -4,7 +4,7 @@ using UnityEngine;
 public class GoalTracker : MonoBehaviour
 {
 
-    private GridStorage _gridStorage;
+    [SerializeField] GridStorage _gridStorage;
     
     public Dictionary<string, int> ObstacleCounts { get; private set; }
 
@@ -15,11 +15,6 @@ public class GoalTracker : MonoBehaviour
 
     public void SetGoals()
     {
-        if (_gridStorage == null)
-        {
-            Debug.LogWarning("GridStorage not found in GoalTracker.");
-            return;
-        }
 
         var gridTypes = _gridStorage.ReturnGridTypes();
         ObstacleCounts = new Dictionary<string, int>();

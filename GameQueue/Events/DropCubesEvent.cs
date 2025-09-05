@@ -19,11 +19,8 @@ public class DropCubesEvent : GameEvent
     {
         Debug.Log("Dropping cubes due to gravity");
         
-        EventQueueManager.Instance.RegisterAnimationStart();
-        
         bool anyMovement = false;
-        int totalAnimations = 0;
-        int completedAnimations = 0;
+        List<(AbstractGridObject obj, Vector2Int from, Vector2Int to)> movements = new List<(AbstractGridObject, Vector2Int, Vector2Int)>();
         
         // Process each column from bottom to top
         for (int x = 0; x < gridWidth; x++)
@@ -50,36 +47,41 @@ public class DropCubesEvent : GameEvent
                 Vector2Int newPos = new Vector2Int(x, i);
                 Vector2Int oldPos = originalPositions[i];
                 
+                // Update grid storage
+                gridStorage.SetObjectAt(newPos, columnObjects[i]);
+                columnObjects[i].GridPosition = newPos;
+                
                 if (newPos != oldPos)
                 {
                     anyMovement = true;
-                    totalAnimations++;
-                    
-                    // Update grid storage
-                    gridStorage.SetObjectAt(newPos, columnObjects[i]);
-                    columnObjects[i].GridPosition = newPos;
-                    
-                    // Animate the drop
-                    AnimateDrop(columnObjects[i], newPos, () => {
-                        completedAnimations++;
-                        if (completedAnimations >= totalAnimations)
-                        {
-                            EventQueueManager.Instance.RegisterAnimationComplete();
-                        }
-                    });
-                }
-                else
-                {
-                    // No movement needed, just put back in storage
-                    gridStorage.SetObjectAt(newPos, columnObjects[i]);
+                    movements.Add((columnObjects[i], oldPos, newPos));
                 }
             }
         }
         
-        // If no movement occurred, complete immediately
-        if (!anyMovement)
+        // FIX: Only register animation if there's movement
+        if (anyMovement)
         {
-            EventQueueManager.Instance.RegisterAnimationComplete();
+            EventQueueManager.Instance.RegisterAnimationStart();
+            
+            int totalAnimations = movements.Count;
+            int completedAnimations = 0;
+            
+            foreach (var (obj, from, to) in movements)
+            {
+                AnimateDrop(obj, to, () => {
+                    completedAnimations++;
+                    if (completedAnimations >= totalAnimations)
+                    {
+                        EventQueueManager.Instance.RegisterAnimationComplete();
+                    }
+                });
+            }
+        }
+        else
+        {
+            Debug.Log("No cubes needed to drop");
+            // Don't register any animations if nothing moved
         }
     }
     
@@ -90,6 +92,7 @@ public class DropCubesEvent : GameEvent
             // Get proper world position from GridManager
             var gridManager = Object.FindFirstObjectByType<GridManager>();
             Vector3 targetWorldPos = gridManager.GridToWorldPosition(targetGridPos);
+            
             // Mark as falling
             if (obj is CubeObject cube)
             {
@@ -115,5 +118,4 @@ public class DropCubesEvent : GameEvent
             onComplete?.Invoke();
         }
     }
-    
 }

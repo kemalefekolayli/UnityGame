@@ -7,6 +7,7 @@ public class CubeClickEvent : GameEvent
     public Vector2Int Position { get; private set; }
     public CubeColor Color { get; private set; }
     public CubeObject Cube { get; private set; }
+    private static bool isProcessingClick = false; // FIX 1: Static flag to prevent duplicate processing
     
     public CubeClickEvent(CubeObject cube, int priority = 10) : base(priority)
     {
@@ -17,6 +18,15 @@ public class CubeClickEvent : GameEvent
     
     public override void Execute()
     {
+        // FIX 2: Prevent duplicate execution
+        if (isProcessingClick)
+        {
+            Debug.LogWarning("Already processing a click event - skipping duplicate");
+            return;
+        }
+        
+        isProcessingClick = true;
+        
         Debug.Log($"Processing cube click at {Position} with color {Color}");
         
         var gridStorage = Object.FindFirstObjectByType<GridStorage>();
@@ -25,6 +35,16 @@ public class CubeClickEvent : GameEvent
         if (gridStorage == null || gridManager == null)
         {
             Debug.LogError("Missing GridStorage or GridManager");
+            isProcessingClick = false;
+            return;
+        }
+        
+        // FIX 3: Verify cube still exists before processing
+        var currentObj = gridStorage.GetObjectAt(Position);
+        if (currentObj == null)
+        {
+            Debug.LogWarning($"Cube at {Position} no longer exists - likely already processed");
+            isProcessingClick = false;
             return;
         }
         
@@ -34,6 +54,7 @@ public class CubeClickEvent : GameEvent
         if (!gridGroups.HasValidGroup(Position))
         {
             Debug.Log("No valid group at clicked position - ignoring click");
+            isProcessingClick = false;
             return;
         }
         
@@ -43,6 +64,7 @@ public class CubeClickEvent : GameEvent
         if (!gridGroups.IsValidGroup(clickedGroup))
         {
             Debug.Log("Clicked group is not valid for matching");
+            isProcessingClick = false;
             return;
         }
         
@@ -62,6 +84,7 @@ public class CubeClickEvent : GameEvent
             // For now, just process as normal match
         }
         
+        // FIX 4: Create events with proper timing
         // Directly destroy ONLY the clicked group
         var destroyEvent = new DestroySpecificGroupEvent(clickedGroup, gridStorage, priority: 9);
         EventQueueManager.Instance.EnqueueEvent(destroyEvent);
@@ -72,8 +95,11 @@ public class CubeClickEvent : GameEvent
         
         // REMOVED SPAWN EVENT - No new cubes for now
         
-        // End turn
+        // End turn (this will decrease move count)
         var endTurnEvent = new EndTurnEvent(priority: 6);
         EventQueueManager.Instance.EnqueueEvent(endTurnEvent);
+        
+        // FIX 5: Reset flag after all events are queued
+        isProcessingClick = false;
     }
 }

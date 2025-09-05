@@ -15,19 +15,36 @@ public class CubeObject : AbstractGridObject
     [SerializeField] private Sprite regularSprite;
 
     private bool isGrouped;
-    
-
+    private static float lastClickTime = 0f; // FIX 1: Track last click time
+    private const float CLICK_COOLDOWN = 0.1f; // FIX 2: 100ms cooldown between clicks
     
     public CubeColor Color => cubeColor;
     public bool IsFalling { get; set; }
     
     void OnMouseDown()
     {
-        Debug.Log("OnMouseDown");
+        // FIX 3: Implement click cooldown to prevent double-clicking
+        float currentTime = Time.time;
+        if (currentTime - lastClickTime < CLICK_COOLDOWN)
+        {
+            Debug.Log("Click ignored - too soon after last click");
+            return;
+        }
+        lastClickTime = currentTime;
+        
+        Debug.Log($"OnMouseDown at position {GridPosition}");
+        
         // Input blocked kontrolü
         if (EventQueueManager.Instance.InputBlocked)
         {
-            Debug.Log("Input blocked - animation in progress");
+            Debug.Log("Input blocked - animation or processing in progress");
+            return;
+        }
+        
+        // FIX 4: Check if we're already processing
+        if (EventQueueManager.Instance.IsProcessing)
+        {
+            Debug.Log("Already processing an event - ignoring click");
             return;
         }
         
@@ -38,12 +55,24 @@ public class CubeObject : AbstractGridObject
             return;
         }
         
+        // FIX 5: Verify this cube still exists in storage
+        var gridStorage = FindFirstObjectByType<GridStorage>();
+        if (gridStorage != null)
+        {
+            var storedObj = gridStorage.GetObjectAt(GridPosition);
+            if (storedObj != this)
+            {
+                Debug.LogWarning($"This cube is not in storage at {GridPosition} - may be orphaned");
+                return;
+            }
+        }
+        
         // Event oluştur ve queue'ya ekle
         var clickEvent = new CubeClickEvent(this);
         EventQueueManager.Instance.EnqueueEvent(clickEvent);
     }
     
-    public void Initialize(Vector2Int Position, string ColorT, Sprite RegularSprite, Sprite RocketHintSprite )
+    public void Initialize(Vector2Int Position, string ColorT, Sprite RegularSprite, Sprite RocketHintSprite)
     {
         rocketHintSprite = RocketHintSprite;
         regularSprite = RegularSprite;
@@ -51,9 +80,6 @@ public class CubeObject : AbstractGridObject
         SetColor(ColorT);
         SetSprite(regularSprite);
     }
-
-    
-
 
     public CubeColor GetCubeColor()
     {
@@ -86,7 +112,6 @@ public class CubeObject : AbstractGridObject
 
     public void SetColor(string colorT)
     {
-
         if (colorT == "r")
             cubeColor = CubeColor.r;
         else if (colorT == "g")
@@ -100,7 +125,8 @@ public class CubeObject : AbstractGridObject
             // Choose a random color
             cubeColor = (CubeColor)Random.Range(0, 4);
         }
-        else {
+        else
+        {
             Debug.LogWarning($"Invalid color: {colorT}");
             cubeColor = CubeColor.r;
         }
@@ -109,5 +135,20 @@ public class CubeObject : AbstractGridObject
     public Vector2Int GetGridPos()
     {
         return GridPosition;
+    }
+    
+    // FIX 6: Clean up when destroyed
+    void OnDestroy()
+    {
+        // Make sure we're removed from storage if we're being destroyed
+        var gridStorage = FindFirstObjectByType<GridStorage>();
+        if (gridStorage != null)
+        {
+            var storedObj = gridStorage.GetObjectAt(GridPosition);
+            if (storedObj == this)
+            {
+                gridStorage.RemoveObjectAt(GridPosition);
+            }
+        }
     }
 }

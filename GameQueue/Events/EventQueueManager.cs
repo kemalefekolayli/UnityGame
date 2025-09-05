@@ -31,6 +31,7 @@ public class EventQueueManager : MonoBehaviour
     
     // Animation tracking
     private int activeAnimations = 0;
+    private bool isExecutingEvent = false; // FIX 1: Add flag to prevent re-entrance
     
     void Awake()
     {
@@ -45,7 +46,11 @@ public class EventQueueManager : MonoBehaviour
     
     void Update()
     {
-        ProcessQueue();
+        // FIX 2: Add guard to prevent re-entrance during execution
+        if (!isExecutingEvent)
+        {
+            ProcessQueue();
+        }
     }
     
     public void EnqueueEvent(GameEvent gameEvent)
@@ -53,11 +58,8 @@ public class EventQueueManager : MonoBehaviour
         // Priority handling için buffer'a ekle
         priorityBuffer.Add(gameEvent);
         
-        // Priority'ye göre sırala ve queue'ya ekle
-        if (!IsProcessing)
-        {
-            FlushPriorityBuffer();
-        }
+        // FIX 3: Don't flush buffer here - only flush when processing
+        // This was causing events to be added to queue while processing
     }
     
     private void FlushPriorityBuffer()
@@ -77,20 +79,28 @@ public class EventQueueManager : MonoBehaviour
     
     private void ProcessQueue()
     {
+        // FIX 4: Check animations first
+        if (activeAnimations > 0) return;
+        
         // Event işleniyorsa veya queue boşsa çık
-        if (IsProcessing || eventQueue.Count == 0) return;
+        if (IsProcessing || (eventQueue.Count == 0 && priorityBuffer.Count == 0)) return;
         
         // Buffer'daki eventleri flush et
         FlushPriorityBuffer();
         
+        // Check again after flush
+        if (eventQueue.Count == 0) return;
+        
         // Sıradaki eventi al ve işle
         IsProcessing = true;
         InputBlocked = true;
+        isExecutingEvent = true; // FIX 5: Set execution flag
         
         var currentEvent = eventQueue.Dequeue();
         
         try
         {
+            Debug.Log($"Processing event: {currentEvent.GetType().Name} with priority {currentEvent.Priority}");
             currentEvent.Execute();
         }
         catch(System.Exception e)
@@ -99,10 +109,11 @@ public class EventQueueManager : MonoBehaviour
         }
         finally
         {
+            isExecutingEvent = false; // FIX 6: Clear execution flag
             IsProcessing = false;
             
-            // Eğer animasyon yoksa input'u aç
-            if (activeAnimations == 0)
+            // FIX 7: Only unblock input if no animations AND no more events
+            if (activeAnimations == 0 && eventQueue.Count == 0 && priorityBuffer.Count == 0)
             {
                 InputBlocked = false;
             }
@@ -114,15 +125,23 @@ public class EventQueueManager : MonoBehaviour
     {
         activeAnimations++;
         InputBlocked = true;
+        Debug.Log($"Animation started. Active animations: {activeAnimations}");
     }
     
     public void RegisterAnimationComplete()
     {
         activeAnimations--;
+        Debug.Log($"Animation completed. Active animations: {activeAnimations}");
+        
         if (activeAnimations <= 0)
         {
             activeAnimations = 0;
-            InputBlocked = false;
+            
+            // FIX 8: Only unblock if no pending events
+            if (eventQueue.Count == 0 && priorityBuffer.Count == 0)
+            {
+                InputBlocked = false;
+            }
         }
     }
     
@@ -131,6 +150,9 @@ public class EventQueueManager : MonoBehaviour
         eventQueue.Clear();
         priorityBuffer.Clear();
         IsProcessing = false;
+        isExecutingEvent = false;
+        activeAnimations = 0;
+        InputBlocked = false;
     }
 }
 }

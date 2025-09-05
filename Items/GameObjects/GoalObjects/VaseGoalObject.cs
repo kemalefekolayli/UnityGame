@@ -1,9 +1,16 @@
 ﻿using UnityEngine;
 
-public class VaseGoalObject : GoalObject {
-    
+public class VaseGoalObject : GoalObject
+{
     public override void SetGoalText()
     {
-        _goalText.text =  _goalTracker.GetObstacleCount("v").ToString();
+        if (_goalTracker == null)
+        {
+            Debug.LogError("GoalTracker is null in VaseGoalObject!");
+            return;
+        }
+        
+        int count = _goalTracker.GetObstacleCount("v");
+        SetText(count.ToString());
     }
 }

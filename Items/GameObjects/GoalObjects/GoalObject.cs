@@ -1,20 +1,43 @@
 ﻿using UnityEngine;
 using TMPro;
-public abstract class GoalObject : MonoBehaviour {
+
+public abstract class GoalObject : MonoBehaviour 
+{
+    protected SpriteRenderer _spriteRenderer;
+    protected TMP_Text _goalText;
+    protected GoalTracker _goalTracker;
+    protected bool isActiveInLevel;
+
+    // Initialize is called by GoalTrackView after instantiation
+    public void Initialize(GoalTracker tracker)
+    {
+        _goalTracker = tracker;
         
-        protected SpriteRenderer _spriteRenderer;
-        protected bool isActiveInLevel;
-        protected TMP_Text _goalText;
-        protected GoalTracker _goalTracker;
-
-        void Start()
+        // Get components
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _goalText = GetComponentInChildren<TMP_Text>();
+        
+        if (_goalText == null)
         {
-                _spriteRenderer = GetComponent<SpriteRenderer>();
-                _goalText = GetComponentInChildren<TMP_Text>();
+            Debug.LogError($"No TMP_Text found in children of {gameObject.name}. Make sure the prefab has a child with TMP_Text component!");
         }
+        
+        // Set initial text
+        SetGoalText();
+    }
 
-        public virtual void SetGoalText()
+    public abstract void SetGoalText();
+    
+    // Helper method to safely set text
+    protected void SetText(string text)
+    {
+        if (_goalText != null)
         {
-               _goalText.text =  _goalTracker.GetObstacleCount("string").ToString();
+            _goalText.text = text;
         }
+        else
+        {
+            Debug.LogWarning($"Trying to set text but _goalText is null on {gameObject.name}");
+        }
+    }
 }

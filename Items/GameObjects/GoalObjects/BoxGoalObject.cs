@@ -1,14 +1,16 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BoxGoalObject : GoalObject
 {
     public override void SetGoalText()
     {
-        if (_goalText == null)
+        if (_goalTracker == null)
         {
-            Debug.Log("No goal text set - 1234");
+            Debug.LogError("GoalTracker is null in BoxGoalObject!");
+            return;
         }
-        _goalText.text =  _goalTracker.GetObstacleCount("bo").ToString();
+        
+        int count = _goalTracker.GetObstacleCount("bo");
+        SetText(count.ToString());
     }
 }

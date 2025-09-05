@@ -1,49 +1,86 @@
 ﻿using UnityEngine;
-using TMPro;
+using System.Collections;
+
 public class GoalTrackView : MonoBehaviour
 {
+    [Header("Goal Prefabs")]
     [SerializeField] private GameObject stoneGoalPrefab;
     [SerializeField] private GameObject boxGoalPrefab;
     [SerializeField] private GameObject vaseGoalPrefab;
     
+    [Header("Parent Transform")]
+    [SerializeField] private Transform goalsContainer;
     
     private GoalTracker _goalTracker;
-    private GoalObject stoneGoal;
-    private GoalObject boxGoal;
-    private GoalObject vaseGoal;
-    
-    private Transform parentTransform;
-
+    private BoxGoalObject boxGoal;
+    private StoneGoalObject stoneGoal;
+    private VaseGoalObject vaseGoal;
 
     void Start()
     {
         _goalTracker = FindFirstObjectByType<GoalTracker>();
-        boxGoalPrefab.SetActive(true);
-        stoneGoalPrefab.SetActive(true);
-        vaseGoalPrefab.SetActive(true);
-
-        InitializeGoals();
-        UpdateText();
         
+        if (goalsContainer == null)
+            goalsContainer = transform;
+    }
+    
+    // Called by GridManager after grid is built
+    public void InitializeGoals()
+    {
+        _goalTracker.SetGoals();
+        CreateGoalUI();
     }
 
-    void InitializeGoals()
+    void CreateGoalUI()
     {
-        Vector3 worldPos = transform.position + new Vector3(1, 0, 0);
-        GameObject StoneGoal = Instantiate(stoneGoalPrefab, worldPos, Quaternion.identity, parentTransform);
-        stoneGoal = StoneGoal.GetComponent<GoalObject>();
-        Vector3 worldPos2 = transform.position + new Vector3(0, 1, 0);
-        GameObject BoxGoal = Instantiate(boxGoalPrefab, worldPos2, Quaternion.identity, parentTransform);
-        boxGoal = BoxGoal.GetComponent<GoalObject>();
-        Vector3 worldPos3 = transform.position + new Vector3(0, 0, 1);
-        GameObject VaseGoal = Instantiate(vaseGoalPrefab, worldPos3, Quaternion.identity, parentTransform);
-        vaseGoal = VaseGoal.GetComponent<GoalObject>();
-  
+        float spacing = 100f;
+        float currentX = -spacing;
+        
+        // Box obstacles
+        if (_goalTracker.GetObstacleCount("bo") > 0)
+        {
+            boxGoal = CreateGoalObject<BoxGoalObject>(boxGoalPrefab, currentX);
+            currentX += spacing;
+        }
+        
+        // Stone obstacles  
+        if (_goalTracker.GetObstacleCount("s") > 0)
+        {
+            stoneGoal = CreateGoalObject<StoneGoalObject>(stoneGoalPrefab, currentX);
+            currentX += spacing;
+        }
+        
+        // Vase obstacles
+        if (_goalTracker.GetObstacleCount("v") > 0)
+        {
+            vaseGoal = CreateGoalObject<VaseGoalObject>(vaseGoalPrefab, currentX);
+        }
     }
-    void UpdateText()
+    
+    T CreateGoalObject<T>(GameObject prefab, float xPosition) where T : GoalObject
     {
-        stoneGoal.SetGoalText();
-        boxGoal.SetGoalText();
-        vaseGoal.SetGoalText();
+        GameObject obj = Instantiate(prefab, goalsContainer);
+        T goalComponent = obj.GetComponent<T>();
+        
+        goalComponent.Initialize(_goalTracker);
+        
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.anchoredPosition = new Vector2(xPosition, 0);
+            rect.sizeDelta = new Vector2(80, 80);  
+            rect.localScale = Vector3.one;  
+        }
+            
+        return goalComponent;
+    }
+    
+    public void RefreshGoals()
+    {
+        _goalTracker.SetGoals();
+        
+        if (boxGoal != null) boxGoal.SetGoalText();
+        if (stoneGoal != null) stoneGoal.SetGoalText();
+        if (vaseGoal != null) vaseGoal.SetGoalText();
     }
 }

@@ -5,30 +5,27 @@ public class GoalTracker : MonoBehaviour
 {
 
     private GridStorage _gridStorage;
+    private LevelController _levelController;
     
     public Dictionary<string, int> ObstacleCounts { get; private set; }
-    
+
     public void SetGoals()
     {
-        if (_gridStorage == null)
-        {
-            _gridStorage = FindFirstObjectByType<GridStorage>();
-        }
-        var gridTypes = _gridStorage.ReturnGridTypes();
+        _levelController = FindFirstObjectByType<LevelController>();
+        List<string> levelGrid = _levelController.GetLevelData().GetGridVector();
         ObstacleCounts = new Dictionary<string, int>();
-
-        foreach (var kvp in gridTypes)
+        for (int i = 0; i < levelGrid.Count; i++)
         {
-            string cellType = kvp.Value;
+            if (levelGrid[i].Equals("bo"))
+            {
+               
+                if (!ObstacleCounts.ContainsKey("bo"))
+                    ObstacleCounts["bo"] = 0;
 
-            if (string.IsNullOrEmpty(cellType))
-                continue;
-
-            if (!ObstacleCounts.ContainsKey(cellType))
-                ObstacleCounts[cellType] = 0;
-
-            ObstacleCounts[cellType]++;
+                ObstacleCounts["bo"]++;
+            }
         }
+        Debug.LogError(GetObstacleCount("bo"));
     }
     
     
@@ -39,7 +36,7 @@ public class GoalTracker : MonoBehaviour
             : 0;
     }
     
-    public void DecreaseObstacle(string code, int amount = 1)
+    public void DecreaseObstacle(string code, int amount = 1) // when an obstacle is destroyed we will be calling an obstacle destroy method and will call this
     {
         if (ObstacleCounts == null) return;
 

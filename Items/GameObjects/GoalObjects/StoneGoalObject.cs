@@ -4,6 +4,13 @@ public class StoneGoalObject : GoalObject
 {
     public override void SetGoalText()
     {
-        _goalText.text =  _goalTracker.GetObstacleCount("s").ToString();
+        if (_goalTracker == null)
+        {
+            Debug.LogError("GoalTracker is null in StoneGoalObject!");
+            return;
+        }
+        
+        int count = _goalTracker.GetObstacleCount("s");
+        SetText(count.ToString());
     }
 }

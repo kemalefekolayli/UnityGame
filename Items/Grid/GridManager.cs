@@ -12,6 +12,7 @@ public class GridManager : MonoBehaviour
     public int GridHeight;
     public int GridWidth;
     private Vector2 gridOrigin; // Bottom-left corner in world space
+    private GoalTrackView goalTrackView;
     
     [Header("Prefabs")]
     [SerializeField] GameObject cubePrefab;
@@ -46,6 +47,11 @@ public class GridManager : MonoBehaviour
             string cellType = gridStorage.grid[i];
             
             CreateCube(worldPos, gridPos, cellType); // bazılarını basamıyo henüz
+        }
+        goalTrackView = FindFirstObjectByType<GoalTrackView>();
+        if (goalTrackView != null)
+        {
+            goalTrackView.InitializeGoals();
         }
     }
     

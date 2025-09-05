@@ -15,22 +15,15 @@ public class DestroySpecificGroupEvent : GameEvent
     
     public override void Execute()
     {
-        Debug.Log($"Destroying specific group of {groupToDestroy.Count} cubes");
-        
-        // FIX 2: Collect all objects first before destroying
+        // Collect all objects first before destroying
         List<GameObject> objectsToDestroy = new List<GameObject>();
         
         foreach (var position in groupToDestroy)
         {
-            Debug.Log($"Checking position {position}");
             var obj = gridStorage.GetObjectAt(position);
-            
             if (obj != null)
             {
-                Debug.Log($"Found cube at {position}: {obj.GetType().Name}");
                 objectsToDestroy.Add(obj.gameObject);
-                
-                // Remove from grid storage immediately
                 gridStorage.RemoveObjectAt(position);
             }
             else
@@ -39,7 +32,7 @@ public class DestroySpecificGroupEvent : GameEvent
             }
         }
         
-        // FIX 3: Always register animation start/complete even if no objects
+        // Always register animation start/complete even if no objects
         if (objectsToDestroy.Count > 0)
         {
             EventQueueManager.Instance.RegisterAnimationStart();
@@ -62,14 +55,9 @@ public class DestroySpecificGroupEvent : GameEvent
                 });
             }
         }
-        else
-        {
-            // FIX 4: No objects to destroy - don't block with animations
-            Debug.LogWarning("No objects were found to destroy");
-        }
     }
     
-    private void AnimateDestruction(GameObject obj, System.Action onComplete)
+    private void AnimateDestruction(GameObject obj, System.Action onComplete) // this will a separete event class later on
     {
         if (obj != null)
         {
@@ -79,12 +67,11 @@ public class DestroySpecificGroupEvent : GameEvent
             // In real implementation, use DOTween for animation
             GameObject.Destroy(obj);
             
-            // FIX 5: Always call onComplete
+            //  Always call onComplete
             onComplete?.Invoke();
         }
         else
         {
-            Debug.LogWarning("Tried to animate null GameObject");
             onComplete?.Invoke();
         }
     }

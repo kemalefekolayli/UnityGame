@@ -10,8 +10,13 @@ public class EndTurnEvent : GameEvent
     {
         Debug.Log("Turn completed - no more matches found");
         
-        // Decrease move count
+        // Decrease move count - udate goal
         var moveCounter = Object.FindFirstObjectByType<MoveCounter>();
+        var goalTracker =  Object.FindFirstObjectByType<GoalTracker>();
+        if (goalTracker != null)
+        {
+            goalTracker.SetGoals();
+        } 
         if (moveCounter != null)
         {
             bool canContinue = moveCounter.DecreaseMoveCount();
@@ -40,7 +45,7 @@ public class EndTurnEvent : GameEvent
         Debug.Log("Ready for next player input");
     }
     
-    private bool CheckWinCondition()
+    private bool CheckWinCondition() // should not be done here
     {
         // Check if all obstacles are cleared
         var gridStorage = Object.FindFirstObjectByType<GridStorage>();
@@ -70,7 +75,7 @@ public class EndTurnEvent : GameEvent
         return true; // No obstacles found = level complete
     }
     
-    private void UpdateRocketHints()
+    private void UpdateRocketHints() // should also not be done here
     {
         var gridStorage = Object.FindFirstObjectByType<GridStorage>();
         var gridManager = Object.FindFirstObjectByType<GridManager>();

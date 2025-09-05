@@ -41,7 +41,6 @@ public class GridStorage : MonoBehaviour
         }
     }
 
-// In GridStorage.cs
     public CubeColor GetColorAt(Vector2Int position)
     {
         var obj = GetObjectAt(position);
@@ -50,5 +49,11 @@ public class GridStorage : MonoBehaviour
             return cube.GetCubeColor();
         }
         return (CubeColor)99;
+    }
+    
+    // this might cause problem as it will return a reference to the gridObjects dictionary HAVE TO TEST THIS TODO TEST THIS
+    public Dictionary<Vector2Int, string> ReturnGridTypes()
+    {
+        return GridTypes;
     }
 }

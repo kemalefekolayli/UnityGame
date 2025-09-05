@@ -26,13 +26,20 @@ public class LevelButton : MonoBehaviour
     
     void LoadSelectedLevel()
     {
-        Debug.Log($"Loading level {levelNumber}");
+ 
         
         levelController.SetLevelData(levelController.LoadLevelData(levelNumber));
         
         if (levelController.GetLevelData() != null)
         {
+            
             Debug.Log($"Level {levelNumber} yükleniyor...");
+            
+            var goalTracker =  Object.FindFirstObjectByType<GoalTracker>();
+            if (goalTracker != null)
+            {
+                goalTracker.SetGoals();
+            };
             SaveLastPlayedLevel(levelNumber);
             SceneManager.LoadScene("LevelScene");
         }

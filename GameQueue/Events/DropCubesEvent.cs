@@ -17,8 +17,6 @@ public class DropCubesEvent : GameEvent
     
     public override void Execute()
     {
-        Debug.Log("Dropping cubes due to gravity");
-        
         bool anyMovement = false;
         List<(AbstractGridObject obj, Vector2Int from, Vector2Int to)> movements = new List<(AbstractGridObject, Vector2Int, Vector2Int)>();
         

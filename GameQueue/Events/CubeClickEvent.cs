@@ -48,6 +48,12 @@ public class CubeClickEvent : GameEvent
         
         Debug.Log($"Valid group found with {clickedGroup.Count} cubes");
         
+        // Debug: Log all positions in the group
+        foreach (var pos in clickedGroup)
+        {
+            Debug.Log($"Group contains cube at: {pos}");
+        }
+        
         // Check if this should create a rocket (4+ cubes)
         if (gridGroups.IsValidGroupOfFour(clickedGroup))
         {
@@ -64,11 +70,9 @@ public class CubeClickEvent : GameEvent
         var dropEvent = new DropCubesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 8);
         EventQueueManager.Instance.EnqueueEvent(dropEvent);
         
-        // After dropping, spawn new cubes
-        var spawnEvent = new SpawnCubesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 7);
-        EventQueueManager.Instance.EnqueueEvent(spawnEvent);
+        // REMOVED SPAWN EVENT - No new cubes for now
         
-        // End turn - NO automatic cascade checking
+        // End turn
         var endTurnEvent = new EndTurnEvent(priority: 6);
         EventQueueManager.Instance.EnqueueEvent(endTurnEvent);
     }

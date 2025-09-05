@@ -87,9 +87,9 @@ public class DropCubesEvent : GameEvent
     {
         if (obj != null)
         {
-            // Calculate world position for target
-            Vector3 targetWorldPos = GridToWorldPosition(targetGridPos);
-            
+            // Get proper world position from GridManager
+            var gridManager = Object.FindFirstObjectByType<GridManager>();
+            Vector3 targetWorldPos = gridManager.GridToWorldPosition(targetGridPos);
             // Mark as falling
             if (obj is CubeObject cube)
             {
@@ -116,16 +116,4 @@ public class DropCubesEvent : GameEvent
         }
     }
     
-    private Vector3 GridToWorldPosition(Vector2Int gridPos)
-    {
-        // This should match your GridManager's conversion logic
-        var gridManager = Object.FindFirstObjectByType<GridManager>();
-        if (gridManager != null)
-        {
-            // You'll need to expose this method in GridManager or calculate here
-            // For now, using a simple calculation
-            return new Vector3(gridPos.x * 0.5f, gridPos.y * 0.5f, 0);
-        }
-        return Vector3.zero;
-    }
 }

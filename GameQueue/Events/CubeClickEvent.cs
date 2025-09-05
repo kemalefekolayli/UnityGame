@@ -56,21 +56,20 @@ public class CubeClickEvent : GameEvent
             // For now, just process as normal match
         }
         
-        // Mark cubes in the group for destruction by removing them from storage
-        // (The actual destruction will be handled by CheckMatchesEvent -> DestroyCubesEvent)
-        foreach (var pos in clickedGroup)
-        {
-            var obj = gridStorage.GetObjectAt(pos);
-            if (obj != null)
-            {
-                // Don't remove from storage yet - let DestroyCubesEvent handle it
-                // Just mark them visually if needed
-                Debug.Log($"Cube at {pos} marked for destruction");
-            }
-        }
+        // Directly destroy ONLY the clicked group
+        var destroyEvent = new DestroySpecificGroupEvent(clickedGroup, gridStorage, priority: 9);
+        EventQueueManager.Instance.EnqueueEvent(destroyEvent);
         
-        // Start the match-checking chain
-        var checkMatchesEvent = new CheckMatchesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 9);
-        EventQueueManager.Instance.EnqueueEvent(checkMatchesEvent);
+        // After destruction, drop cubes
+        var dropEvent = new DropCubesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 8);
+        EventQueueManager.Instance.EnqueueEvent(dropEvent);
+        
+        // After dropping, spawn new cubes
+        var spawnEvent = new SpawnCubesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 7);
+        EventQueueManager.Instance.EnqueueEvent(spawnEvent);
+        
+        // End turn - NO automatic cascade checking
+        var endTurnEvent = new EndTurnEvent(priority: 6);
+        EventQueueManager.Instance.EnqueueEvent(endTurnEvent);
     }
 }

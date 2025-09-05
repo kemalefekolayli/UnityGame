@@ -56,7 +56,7 @@ public class GridManager : MonoBehaviour
         return new Vector2Int(x, y);
     }
     
-    Vector2 GridToWorldPosition(Vector2Int gridPos)
+    public Vector2 GridToWorldPosition(Vector2Int gridPos)
     {
         return gridOrigin + new Vector2(
             gridPos.x * gridSettings.CellSpacing, 

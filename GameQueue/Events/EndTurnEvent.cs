@@ -60,15 +60,10 @@ public class EndTurnEvent : GameEvent
             for (int y = 0; y < gridManager.GridHeight; y++)
             {
                 var obj = gridStorage.GetObjectAt(new Vector2Int(x, y));
-                
-                // If we find any obstacle (BoxObstacle, Stone, Vase), level not complete
-                if (obj is BoxObstacle)
+                if (obj is BoxObstacle ||  obj is StoneObstacle || obj is VaseObstacle) // not ideal I KNOW but i dont have time
                 {
                     return false;
                 }
-                // Add checks for other obstacle types when implemented
-                // if (obj is StoneObstacle || obj is VaseObstacle)
-                //     return false;
             }
         }
         

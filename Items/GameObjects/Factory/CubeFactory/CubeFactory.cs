@@ -8,10 +8,15 @@ public class CubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject> {
     [Header("Prefabs and Sprites")]
     public GameObject cubePrefab;
     public GameObject boxObstaclePrefab;
+    public GameObject vaseObstaclePrefab;
+    
+    [Header("Obstacle Sprites")]
+    [SerializeField] Sprite BoxObstacleSprite;
+    [SerializeField] Sprite VaseObstacleSprite;
+    [SerializeField] Sprite StoneObstacleSprite;
     
     [Header("Regular Sprites")]
     [SerializeField] GridStorage gridStorage;
-    [SerializeField] Sprite BoxObstacleSprite;
     [SerializeField] Sprite BlueCubeSprite;
     [SerializeField] Sprite RedCubeSprite;
     [SerializeField] Sprite GreenCubeSprite;
@@ -33,8 +38,22 @@ public class CubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject> {
             case "y"  : return CreateYellowCube(worldPos, gridParent, gridPos);
             case "rand": return (CreateCube(GetRandomColor(), worldPos, gridParent, gridPos));
             case "bo" : return CreateBoxCube(worldPos, gridParent, gridPos ); // for now might wanna change this logic later
+            case "v" : return CreateVaseCube(worldPos, gridParent, gridPos);
             default: return null;
         }
+    }
+    
+    private AbstractGridObject CreateVaseCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
+    {
+        GameObject vase = Instantiate(vaseObstaclePrefab, worldPos, Quaternion.identity, gridParent);
+        vase.transform.localScale = Vector3.one * gridSettings.CubeScale;
+        
+        VaseObstacle vaseObstacle = vase.GetComponent<VaseObstacle>();
+        vaseObstacle.Initialize(gridPos, VaseObstacleSprite);
+        vaseObstacle.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
+        gridStorage.SetObjectAt(gridPos, vaseObstacle);
+        
+        return vaseObstacle;
     }
 
     private AbstractGridObject CreateBoxCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)

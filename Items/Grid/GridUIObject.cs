@@ -5,13 +5,13 @@ public class GridUIObject : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private GridSettings gridSettings;
     
+
+    
     private LevelController levelController;
     public int GridHeight;
     public int GridWidth;
-
     public float newWidth;
     public float newHeight;
-
     [SerializeField] private GameObject gridObject;
     private RectTransform gridRect;
     
@@ -23,8 +23,9 @@ public class GridUIObject : MonoBehaviour
             Debug.Log("Loading level data into Grid UI Object");
             GridHeight = levelController.GetLevelData().GetGridHeight();
             GridWidth = levelController.GetLevelData().GetGridWidth();
-            gridRect = gridObject.transform.Find("Grid").GetComponent<RectTransform>();
+            gridRect = gridObject.GetComponent<RectTransform>();
         }
+
         InitGridObject();
     }
 
@@ -33,11 +34,11 @@ public class GridUIObject : MonoBehaviour
         if (gridRect == null) return;
 
         // Use centralized settings for UI calculations
-        newWidth = GridWidth * gridSettings.UICellSize + (GridWidth - 1) * gridSettings.UICellSpacing;
-        newHeight = GridHeight * gridSettings.UICellSize + (GridHeight - 1) * gridSettings.UICellSpacing;
-
+        newWidth = GridWidth * 55f + (GridWidth - 1) * 20f;
+        newHeight = GridHeight * 45f + (GridHeight - 1) * 17f;
+        Debug.LogError(newWidth + "x" + newHeight);
         gridRect.sizeDelta = new Vector2(newWidth, newHeight);
-        SetPosition(0, -100);
+        SetPosition(0, -1);
         
         Debug.Log($"Grid UI resized: {newWidth} x {newHeight}");
     }
@@ -55,13 +56,5 @@ public class GridUIObject : MonoBehaviour
         }
     }
     
-    // Helper method to preview UI settings
-    [ContextMenu("Debug UI Info")]
-    void DebugUIInfo()
-    {
-        Debug.Log($"UI Grid: {GridWidth}x{GridHeight}");
-        Debug.Log($"UI Cell Size: {gridSettings.UICellSize}");
-        Debug.Log($"UI Cell Spacing: {gridSettings.UICellSpacing}");
-        Debug.Log($"Total UI Size: {newWidth} x {newHeight}");
-    }
+    public RectTransform GridRect => gridRect;
 }

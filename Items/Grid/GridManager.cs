@@ -4,7 +4,7 @@ public class GridManager : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private GridSettings gridSettings;
-    
+    [SerializeField] private GridUIObject gridUIObject;
     private LevelController levelController;
     private GridStorage gridStorage;
 
@@ -18,6 +18,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] GameObject cubePrefab;
     [SerializeField] Transform gridParent; // Parent object for all cubes
     [SerializeField] CubeFactory cubeFactory;
+    
     
     
     void Start()
@@ -77,14 +78,17 @@ public class GridManager : MonoBehaviour
     
     public void CalculateGridStartPosition()
     {
-        float totalGridWidth = GridWidth * gridSettings.CellSpacing;
-        float totalGridHeight = GridHeight * gridSettings.CellSpacing;
-        
-        gridOrigin = new Vector2(
-            gridSettings.GridOriginOffset.x - (totalGridWidth / 200) + gridSettings.CellSpacing / 200,
-            gridSettings.GridOriginOffset.y - (totalGridHeight / 200) + gridSettings.CellSpacing / 100
-        );
+        Vector3[] v = new Vector3[4];
+        gridUIObject.GridRect.GetWorldCorners(v);
+        Debug.LogError(v[0]);
+        Vector3 startPos = new Vector3(v[0].x + .305f, v[0].y + .355f, 90f);
+        Debug.LogError(startPos);
+        gridOrigin = startPos;
+
+        Debug.LogError(gridOrigin);
     }
+
+    
     
     
     // helper for debugging

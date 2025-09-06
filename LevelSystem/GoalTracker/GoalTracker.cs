@@ -16,7 +16,7 @@ public class GoalTracker : MonoBehaviour
         ObstacleCounts = new Dictionary<string, int>();
         for (int i = 0; i < levelGrid.Count; i++)
         {
-            if (levelGrid[i].Equals("bo"))
+            if (levelGrid[i].Equals("bo")) // HORRIBLE practice for maintainability i know but i dont have much time 
             {
                
                 if (!ObstacleCounts.ContainsKey("bo"))
@@ -24,8 +24,27 @@ public class GoalTracker : MonoBehaviour
 
                 ObstacleCounts["bo"]++;
             }
+            else if (levelGrid[i].Equals("v"))
+            {
+               
+                if (!ObstacleCounts.ContainsKey("v"))
+                    ObstacleCounts["v"] = 0;
+
+                ObstacleCounts["v"]++;
+            }
+            else if (levelGrid[i].Equals("s"))
+            {
+               
+                if (!ObstacleCounts.ContainsKey("s"))
+                    ObstacleCounts["s"] = 0;
+
+                ObstacleCounts["s"]++;
+            }
         }
+        Debug.LogError(_levelController.GetLevelData().GetLevelNumber());
         Debug.LogError(GetObstacleCount("bo"));
+        Debug.LogError(GetObstacleCount("v"));
+        Debug.LogError(GetObstacleCount("s"));
     }
     
     

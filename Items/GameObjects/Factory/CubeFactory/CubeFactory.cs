@@ -9,6 +9,7 @@ public class CubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject> {
     public GameObject cubePrefab;
     public GameObject boxObstaclePrefab;
     public GameObject vaseObstaclePrefab;
+    public GameObject stoneObstaclePrefab;
     
     [Header("Obstacle Sprites")]
     [SerializeField] Sprite BoxObstacleSprite;
@@ -37,10 +38,24 @@ public class CubeFactory : MonoBehaviour , ObjectFactory<AbstractGridObject> {
             case "g" : return CreateGreenCube(worldPos, gridParent, gridPos);
             case "y"  : return CreateYellowCube(worldPos, gridParent, gridPos);
             case "rand": return (CreateCube(GetRandomColor(), worldPos, gridParent, gridPos));
-            case "bo" : return CreateBoxCube(worldPos, gridParent, gridPos ); // for now might wanna change this logic later
+            case "bo" : return CreateBoxCube(worldPos, gridParent, gridPos ); 
             case "v" : return CreateVaseCube(worldPos, gridParent, gridPos);
+            case "s" : return CreateStoneCube(worldPos, gridParent, gridPos);
             default: return null;
         }
+    }
+    
+    private AbstractGridObject CreateStoneCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)
+    {
+        GameObject stone = Instantiate(stoneObstaclePrefab, worldPos, Quaternion.identity, gridParent);
+        stone.transform.localScale = Vector3.one * gridSettings.CubeScale;
+        
+        StoneObstacle stoneObstacle = stone.GetComponent<StoneObstacle>();
+        stoneObstacle.Initialize(gridPos, StoneObstacleSprite);
+        stoneObstacle.GetComponent<SpriteRenderer>().sortingOrder = gridPos.y + 1;
+        gridStorage.SetObjectAt(gridPos, stoneObstacle);
+        
+        return stoneObstacle;
     }
     
     private AbstractGridObject CreateVaseCube(Vector3 worldPos, Transform gridParent, Vector2Int gridPos)

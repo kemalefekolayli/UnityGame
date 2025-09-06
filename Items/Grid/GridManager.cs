@@ -80,12 +80,8 @@ public class GridManager : MonoBehaviour
     {
         Vector3[] v = new Vector3[4];
         gridUIObject.GridRect.GetWorldCorners(v);
-        Debug.LogError(v[0]);
         Vector3 startPos = new Vector3(v[0].x + .305f, v[0].y + .355f, 90f);
-        Debug.LogError(startPos);
         gridOrigin = startPos;
-
-        Debug.LogError(gridOrigin);
     }
 
     

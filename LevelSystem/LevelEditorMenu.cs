@@ -12,6 +12,12 @@ public class LevelEditorMenu : MonoBehaviour
         SetLastPlayedLevel(1);
     }
     
+    [MenuItem("Dream Games/Set Level/Level 2")]
+    static void SetLevel2()
+    {
+        SetLastPlayedLevel(2);
+    }
+    
     [MenuItem("Dream Games/Set Level/Level 5")]
     static void SetLevel5()
     {

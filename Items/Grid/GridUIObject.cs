@@ -34,9 +34,12 @@ public class GridUIObject : MonoBehaviour
         if (gridRect == null) return;
 
         // Use centralized settings for UI calculations
-        newWidth = GridWidth * 55f + (GridWidth - 1) * 20f;
-        newHeight = GridHeight * 45f + (GridHeight - 1) * 17f;
-        Debug.LogError(newWidth + "x" + newHeight);
+        newWidth = GridWidth * 55f + (GridWidth - 1) * 20f ;
+        newHeight = GridHeight * 45f + (GridHeight - 1) * 17f ;
+        if (GridHeight <= 7)
+        {
+            newHeight = newHeight + 8f; // this is a horrible practice but im just a boy
+        }
         gridRect.sizeDelta = new Vector2(newWidth, newHeight);
         SetPosition(0, -1);
         

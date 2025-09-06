@@ -74,13 +74,15 @@ public class CubeClickEvent : GameEvent
         var dropEvent = new DropCubesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 8);
         EventQueueManager.Instance.EnqueueEvent(dropEvent);
         
-        // REMOVED SPAWN EVENT - No new cubes for now
+        // UNCOMMENTED: Spawn new cubes to fill empty spaces at top
+        var spawnEvent = new SpawnCubesEvent(gridStorage, gridManager.GridWidth, gridManager.GridHeight, priority: 7);
+        EventQueueManager.Instance.EnqueueEvent(spawnEvent);
         
         // End turn (this will decrease move count)
         var endTurnEvent = new EndTurnEvent(priority: 6);
         EventQueueManager.Instance.EnqueueEvent(endTurnEvent);
         
-        // FIX 5: Reset flag after all events are queued
+        // Reset flag after all events are queued
         isProcessingClick = false;
     }
 }

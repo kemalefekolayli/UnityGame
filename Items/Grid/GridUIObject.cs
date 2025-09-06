@@ -36,9 +36,14 @@ public class GridUIObject : MonoBehaviour
         // Use centralized settings for UI calculations
         newWidth = GridWidth * 55f + (GridWidth - 1) * 20f ;
         newHeight = GridHeight * 45f + (GridHeight - 1) * 17f ;
-        if (GridHeight <= 7)
+        if (GridHeight <= 8)
         {
             newHeight = newHeight + 8f; // this is a horrible practice but im just a boy
+        }
+
+        if (GridWidth <= 8)
+        {
+            newWidth = newWidth + 8f;
         }
         gridRect.sizeDelta = new Vector2(newWidth, newHeight);
         SetPosition(0, -1);

@@ -9,21 +9,28 @@ public class DestroySpecificGroupEvent : GameEvent
     
     public DestroySpecificGroupEvent(List<Vector2Int> group, GridStorage storage, int priority = 9) : base(priority)
     {
-        groupToDestroy = new List<Vector2Int>(group); // FIX 1: Create a copy to avoid reference issues
+        groupToDestroy = new List<Vector2Int>(group);
         gridStorage = storage;
     }
     
     public override void Execute()
     {
         // Collect all objects first before destroying
-        List<GameObject> objectsToDestroy = new List<GameObject>();
+        List<(GameObject obj, CubeColor color, Vector3 position)> objectsToDestroy = new List<(GameObject, CubeColor, Vector3)>();
         
         foreach (var position in groupToDestroy)
         {
             var obj = gridStorage.GetObjectAt(position);
             if (obj != null)
             {
-                objectsToDestroy.Add(obj.gameObject);
+                // Get color if it's a cube
+                CubeColor color = CubeColor.rand;
+                if (obj is CubeObject cube)
+                {
+                    color = cube.GetCubeColor();
+                }
+                
+                objectsToDestroy.Add((obj.gameObject, color, obj.transform.position));
                 gridStorage.RemoveObjectAt(position);
             }
             else
@@ -40,10 +47,10 @@ public class DestroySpecificGroupEvent : GameEvent
             int animationsCompleted = 0;
             int totalAnimations = objectsToDestroy.Count;
             
-            // Destroy all collected objects
-            foreach (var obj in objectsToDestroy)
+            // Destroy all collected objects with particles
+            foreach (var (obj, color, position) in objectsToDestroy)
             {
-                AnimateDestruction(obj, () => {
+                AnimateDestruction(obj, color, position, () => {
                     animationsCompleted++;
                     Debug.Log($"Destruction animation completed: {animationsCompleted}/{totalAnimations}");
                     
@@ -57,17 +64,23 @@ public class DestroySpecificGroupEvent : GameEvent
         }
     }
     
-    private void AnimateDestruction(GameObject obj, System.Action onComplete) // this will a separete event class later on
+    private void AnimateDestruction(GameObject obj, CubeColor color, Vector3 position, System.Action onComplete)
     {
         if (obj != null)
         {
-            Debug.Log($"Destroying GameObject: {obj.name}");
+            Debug.Log($"Destroying GameObject: {obj.name} with particles");
+            
+            // Play particle effect if it's a colored cube
+            if (color != CubeColor.rand && CubeParticleController.Instance != null)
+            {
+                CubeParticleController.Instance.PlayDestructionParticles(position, color);
+            }
             
             // For now, just destroy immediately
-            // In real implementation, use DOTween for animation
+            // Later you can add scaling animation before destruction
             GameObject.Destroy(obj);
             
-            //  Always call onComplete
+            // Always call onComplete
             onComplete?.Invoke();
         }
         else
